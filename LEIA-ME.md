@@ -1,37 +1,31 @@
 # V7 IMPORTS — catálogo digital
 
-Site de uma página só, sem carrinho e sem checkout. Todo botão leva pro WhatsApp
-com a mensagem já escrita.
+**No ar:** https://sonouxcoder.github.io/v7imports/
+**Repositório:** https://github.com/SonoUXCODER/v7imports
 
-Para abrir: dê dois cliques em **index.html**.
-Não precisa instalar nada, não precisa de servidor.
+Site sem carrinho e sem checkout. Todo botão leva pro WhatsApp
+(**+55 22 99956-5657**) com a mensagem já escrita, com o nome da peça e o
+tamanho que o cliente escolheu.
 
----
+Páginas:
 
-## 1. Antes de publicar — troque 3 coisas
+| página | o que é |
+|---|---|
+| `index.html` | home: capa em vídeo, categorias, catálogo completo, drop e o carrossel 3D |
+| `camisetas.html` · `conjuntos.html` · `moletons.html` · `calcas.html` · `acessorios.html` | uma landing page por categoria |
 
-Abra `assets/catalogo.js` no Bloco de Notas (ou em qualquer editor) e edite o
-começo do arquivo:
+As páginas de categoria se montam sozinhas: o produto aparece na página da
+categoria que estiver escrita no campo `categoria` dele. Você não precisa
+editar HTML nenhum pra isso.
 
-```js
-const V7_CONFIG = {
-  whatsapp: "5511999999999",              // 55 + DDD + número, só dígitos
-  instagram: "https://instagram.com/v7imports",
-  instagramHandle: "@v7imports",
-  cidade: "SÃO PAULO — BR",
-  mensagemGeral: "Olá! Cheguei pelo site da V7 Imports..."
-};
-```
-
-> O número **5511999999999** é só um exemplo. Enquanto não trocar, os botões
-> abrem uma conversa com um número inexistente.
+Para ver na sua máquina: dê dois cliques em **index.html**.
 
 ---
 
-## 2. Adicionar ou editar um produto
+## 1. Adicionar ou editar um produto
 
-Ainda em `assets/catalogo.js`, dentro de `V7_PRODUTOS`. Copie um bloco inteiro
-(de `{` até `},`) e mude os dados:
+Abra `assets/catalogo.js` (Bloco de Notas serve). Dentro de `V7_PRODUTOS`,
+copie um bloco inteiro (de `{` até `},`) e mude os dados:
 
 ```js
 {
@@ -45,7 +39,7 @@ Ainda em `assets/catalogo.js`, dentro de `V7_PRODUTOS`. Copie um bloco inteiro
   tamanhos: ["P", "M", "G", "GG"],
   status: "disponivel",            // disponivel | ultimas
   tag: "NEW DROP",                 // "NEW DROP" | "LIMITED" | "RESTOCK" | null
-  drop: true,                      // true = aparece também em LANÇAMENTOS
+  drop: true,                      // true = entra no carrossel de lançamentos
   imagens: [
     { src: "nome-da-foto", pos: "50% 40%" },
     { src: "outra-foto",   pos: "50% 20%" }
@@ -58,37 +52,54 @@ Cuidados:
 - texto sempre entre aspas
 - o último bloco da lista não precisa de vírgula depois do `}`
 
-Se o site abrir em branco depois de uma edição, foi uma vírgula ou aspas faltando.
+Se o site abrir em branco depois de uma edição, foi vírgula ou aspas faltando.
 
 ### Preços
 
-Todos estão como `preco: null`, que mostra **"Sob consulta"** no card.
+Todos estão como `preco: null`, o que mostra **"Sob consulta"** no card.
 Quando quiser mostrar valores, troque por um número: `preco: 289.9`
-(vira "R$ 289,90" automaticamente). Dá pra fazer produto por produto.
+(vira "R$ 289,90" sozinho). Dá pra fazer produto por produto.
+
+### WhatsApp e Instagram
+
+No começo do mesmo arquivo:
+
+```js
+const V7_CONFIG = {
+  whatsapp: "5522999565657",                    // 55 + DDD + número
+  instagram: "https://instagram.com/v7imports1",
+  instagramHandle: "@v7imports1",
+  cidade: "SÃO PAULO — BR",                     // troque se a loja for de outra cidade
+  ...
+};
+```
 
 ---
 
-## 3. Colocar fotos novas
+## 2. Colocar fotos novas
 
-Jogue o arquivo dentro de `assets/img/` e use o nome no campo `imagens`:
+Jogue o arquivo em `assets/img/` e use o nome no campo `imagens`:
 
-- **Do jeito mais simples:** salve como `foto-nova.jpg` e escreva
+- **Mais simples:** salve como `foto-nova.jpg` e escreva
   `{ src: "foto-nova.jpg", pos: "50% 40%" }` — com a extensão. Funciona na hora.
-- **Do jeito otimizado (site mais rápido):** salve duas versões em `.webp` —
-  `foto-nova.webp` (uns 1500px) e `foto-nova-sm.webp` (uns 780px) — e escreva o
-  nome **sem** extensão: `{ src: "foto-nova" }`. O site usa a pequena nos cards e
-  a grande quando o cliente abre a peça.
+- **Otimizado (site mais rápido):** salve duas versões `.webp` —
+  `foto-nova.webp` (~1500px) e `foto-nova-sm.webp` (~780px) — e escreva o nome
+  **sem** extensão: `{ src: "foto-nova" }`. O site usa a pequena nos cards e a
+  grande quando o cliente abre a peça.
 
-O `pos` é o enquadramento: primeiro número é horizontal, segundo é vertical.
-`"50% 20%"` mostra a parte de cima da foto, `"50% 80%"` mostra a de baixo.
-Serve pra recortar a mesma foto de jeitos diferentes (dá pra usar uma foto de
-look inteiro e enquadrar só o boné, por exemplo).
+O `pos` é o enquadramento: primeiro número horizontal, segundo vertical.
+`"50% 20%"` mostra a parte de cima da foto; `"50% 80%"`, a de baixo. Serve pra
+recortar a mesma foto de jeitos diferentes (dá pra usar um look inteiro e
+enquadrar só o boné, por exemplo).
+
+Para trocar a **capa de uma categoria**, mude o `img` dela em `V7_CATEGORIAS`,
+no fim do `catalogo.js`.
 
 ---
 
-## 4. Trocar os vídeos
+## 3. Trocar os vídeos
 
-Estão em `assets/video/`:
+Em `assets/video/`:
 
 | arquivo | onde aparece |
 |---|---|
@@ -96,20 +107,23 @@ Estão em `assets/video/`:
 | `v7-reel.mp4` | seção DROP V7 |
 | `v7-reel-2.mp4` | sobrando (tem texto queimado na imagem) |
 
-Para trocar, substitua o arquivo mantendo o mesmo nome, ou edite a linha
-`<source src="assets/video/...">` no `index.html`.
-Vídeo em pé (9:16), curto e sem áudio funciona melhor.
+Substitua mantendo o mesmo nome, ou edite a linha `<source src="...">` no
+`index.html`. Vídeo em pé (9:16), curto e sem áudio funciona melhor.
 
 ---
 
-## 5. Colocar no ar
+## 4. Publicar as mudanças
 
-A pasta inteira é o site. Qualquer hospedagem serve:
+O site já está no ar pelo GitHub Pages. Depois de editar, no terminal dentro
+da pasta:
 
-- **Netlify Drop** (netlify.com/drop): arrasta a pasta e sai com um link. Grátis.
-- **Vercel / GitHub Pages / hospedagem comum:** sobe a pasta inteira na raiz.
+```bash
+git add -A && git commit -m "atualiza catalogo" && git push
+```
 
-Depois é só apontar o domínio e colocar o link na bio do Instagram.
+Em um ou dois minutos o site novo está no ar no mesmo link. Se quiser um
+domínio próprio (ex.: v7imports.com.br), é só apontar o DNS e cadastrar em
+Settings → Pages → Custom domain.
 
 ---
 
@@ -117,13 +131,15 @@ Depois é só apontar o domínio e colocar o link na bio do Instagram.
 
 ```
 v7-imports/
-├─ index.html          o site inteiro (HTML + CSS + JS)
+├─ index.html               home
+├─ camisetas.html …         uma página por categoria (5 arquivos)
 ├─ assets/
-│  ├─ catalogo.js      produtos, categorias, WhatsApp  ← é aqui que você edita
-│  ├─ img/             fotos (.webp otimizado + versões -sm)
-│  └─ video/           vídeos de fundo
-└─ LEIA-ME.md          este arquivo
+│  ├─ catalogo.js           produtos, categorias, WhatsApp  ← você edita aqui
+│  ├─ site.js               comportamento (menu, filtros, modal, carrossel)
+│  ├─ estilo.css            visual do site inteiro
+│  ├─ img/                  fotos (.webp otimizado + versões -sm)
+│  └─ video/                vídeos de fundo
+└─ LEIA-ME.md               este arquivo
 ```
 
-Tudo somado dá ~7 MB, sendo 4,4 MB só de vídeo. As fotos foram comprimidas
-pra ~2,6 MB no total, então a página carrega rápido mesmo no 4G.
+Fotos ~2,6 MB e vídeos ~4,4 MB no total, então carrega rápido até no 4G.
