@@ -331,9 +331,11 @@ body.v7-aberto .v7-painel{transform:translateY(0);pointer-events:auto;visibility
 
 .about{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,5vw,84px);align-items:center}
 .about__media{position:relative}
-.about__media{max-width:520px}
-.about__media .m1{aspect-ratio:1/1;overflow:hidden;background:var(--graf)}
-.about__media .m1 img{width:100%;height:100%;object-fit:cover}
+.about__media{max-width:540px}
+/* moldura em pe: o video da costura e 720x1280 */
+.about__media .m1{aspect-ratio:3/4;overflow:hidden;background:var(--ink)}
+.about__media .m1 img,
+.about__media .m1 video{width:100%;height:100%;object-fit:cover;display:block}
 .about__media .m2{position:absolute;right:-7%;bottom:-8%;width:46%;aspect-ratio:1;overflow:hidden;border:7px solid var(--noir);background:var(--graf)}
 .about__media .m2 img{width:100%;height:100%;object-fit:cover}
 .about p{color:rgba(242,242,238,.76);font-size:clamp(15px,1.5vw,18px);max-width:44ch}

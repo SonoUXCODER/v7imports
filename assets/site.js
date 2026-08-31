@@ -230,6 +230,25 @@ const ICONE_WA = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentC
   });
 })();
 
+/* ============================================== video que roda sozinho ==
+   Sem botao de play: entrou na tela, comeca; saiu, pausa (nao gasta bateria
+   rodando escondido). Mudo e playsinline porque celular so libera autoplay
+   assim.                                                                  */
+(function () {
+  const vids = $$("video[data-auto]");
+  if (!vids.length) return;
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+    else v.pause();
+  }), { threshold: .25 });
+  vids.forEach(v => {
+    v.muted = true;                 /* precisa no objeto, nao so no atributo */
+    v.setAttribute("muted", "");
+    obs.observe(v);
+  });
+})();
+
 /* ================================================== revelar ao rolar ==== */
 const pendentes = new Set();
 const revealObs = new IntersectionObserver(es => {

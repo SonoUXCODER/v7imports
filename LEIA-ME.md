@@ -111,10 +111,16 @@ Em `assets/video/`:
 |---|---|
 | `v7-reel-3.mp4` | fundo da primeira tela |
 | `v7-reel.mp4` | seção DROP V7 |
+| `v7-costura.mp4` | seção "V7 é atitude" (a máquina bordando) |
 | `v7-reel-2.mp4` | sobrando (tem texto queimado na imagem) |
 
 Substitua mantendo o mesmo nome, ou edite a linha `<source src="...">` no
 `index.html`. Vídeo em pé (9:16), curto e sem áudio funciona melhor.
+
+Todos rodam sozinhos, sem botão de play, e ficam em loop. O da seção
+"V7 é atitude" tem `data-auto`: com esse atributo o vídeo pausa quando sai
+da tela e volta quando o cliente chega nele, pra não gastar bateria rodando
+escondido. Se colocar outro vídeo em alguma seção, é só repetir o atributo.
 
 ---
 
@@ -148,4 +154,5 @@ v7-imports/
 └─ LEIA-ME.md               este arquivo
 ```
 
-Fotos ~2,6 MB e vídeos ~4,4 MB no total, então carrega rápido até no 4G.
+Fotos ~2,6 MB e vídeos ~7,5 MB no total. Os vídeos não vêm todos de uma vez:
+cada um só carrega quando o cliente chega na seção dele.
