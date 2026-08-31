@@ -25,8 +25,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:var(--noir);color:var(--off);font-family:var(--f-body);font-size:16px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-/* trava de rolagem do menu/modal: fixa o body e guarda a posicao no JS */
-body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+/* trava de rolagem do menu/modal: sem mexer na posicao, so no overflow */
+html.v7-lock,body.v7-lock{overflow:hidden;overscroll-behavior:none}
 img,video{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button,input{font:inherit;color:inherit;background:none;border:0;outline:0}
@@ -88,19 +88,20 @@ body.cur-on .cur{width:76px;height:76px;margin:-38px 0 0 -38px;background:rgba(2
 .burger{display:none;width:44px;height:44px;margin-left:auto;position:relative;flex:0 0 auto}
 .burger i{position:absolute;left:10px;right:10px;height:2px;background:var(--off);transition:transform .35s var(--ease),opacity .2s}
 .burger i:nth-child(1){top:16px}.burger i:nth-child(2){top:22px}.burger i:nth-child(3){top:28px}
-body.menu .burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
-body.menu .burger i:nth-child(2){opacity:0}
-body.menu .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+body.v7-aberto .burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+body.v7-aberto .burger i:nth-child(2){opacity:0}
+body.v7-aberto .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 
-.menu{position:fixed;inset:0;height:100dvh;z-index:6900;background:var(--ink);padding:calc(var(--head-h) + 20px) var(--pad) 28px;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  opacity:0;visibility:hidden;transform:translateY(-12px);pointer-events:none;
-  transition:opacity .34s var(--ease),transform .5s var(--ease),visibility 0s .5s}
-body.menu .menu{opacity:1;visibility:visible;transform:none;pointer-events:auto;
-  transition:opacity .3s var(--ease),transform .5s var(--ease),visibility 0s}
-.menu a.ml{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(1.9rem,8vw,3.2rem);line-height:1.04;border-bottom:1px solid var(--line-soft);padding:11px 0;opacity:0;transform:translateY(24px);transition:opacity .5s var(--ease),transform .5s var(--ease),color .2s}
-body.menu .menu a.ml{opacity:1;transform:none}
-.menu a.ml:hover,.menu a.ml.ativo{color:var(--neon)}
-.menu__foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;padding-top:24px}
+.v7-painel{position:fixed;inset:0;z-index:6900;background:var(--ink);padding:calc(var(--head-h) + 20px) var(--pad) 28px;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transform:translateY(-100%);pointer-events:none;visibility:hidden;
+  transition:transform .45s var(--ease),visibility 0s .45s}
+body.v7-aberto .v7-painel{transform:translateY(0);pointer-events:auto;visibility:visible;
+  transition:transform .45s var(--ease),visibility 0s}
+/* os links NAO comecam invisiveis de proposito: o fundo do painel e preto,
+   entao qualquer animacao que trave neles deixaria a tela preta e vazia */
+.v7-painel a.v7-ml{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(1.9rem,8vw,3.2rem);line-height:1.04;border-bottom:1px solid var(--line-soft);padding:11px 0;transition:color .2s}
+.v7-painel a.v7-ml:hover,.v7-painel a.v7-ml.ativo{color:var(--neon)}
+.v7-painel__pe{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;padding-top:24px}
 
 /* --------------------------------------------------------------- botões -- */
 .btn{--bg:var(--neon);--fg:#000;position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;background:var(--bg);color:var(--fg);padding:17px 28px;overflow:hidden;font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;transition:transform .3s var(--ease),box-shadow .3s,color .3s}

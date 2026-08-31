@@ -28,20 +28,11 @@ const cap = s => s.charAt(0) + s.slice(1).toLowerCase();
 const PAGINA = document.body.dataset.pagina || 'home';
 const CAT    = document.body.dataset.cat || null;
 
-/* trava/destrava a rolagem guardando a posicao (menu e modal usam isso) */
-let _travaY = 0;
+/* trava/destrava a rolagem (menu e modal usam isso). Segura o overflow no
+   html E no body: mexer na posicao do body dava tela preta em celular. */
 function travar(on) {
-  if (on) {
-    if (document.body.classList.contains('lock')) return;
-    _travaY = window.scrollY;
-    document.body.style.top = -_travaY + 'px';
-    document.body.classList.add('lock');
-  } else {
-    if (!document.body.classList.contains('lock')) return;
-    document.body.classList.remove('lock');
-    document.body.style.top = '';
-    window.scrollTo(0, _travaY);
-  }
+  document.documentElement.classList.toggle('v7-lock', on);
+  document.body.classList.toggle('v7-lock', on);
 }
 
 function waLink(msg) {
@@ -88,13 +79,13 @@ const ICONE_WA = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentC
       <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </header>
 
-    <div class="menu" id="menu">
-      <a class="ml" href="index.html">Início</a>
+    <div class="v7-painel" id="painelNav">
+      <a class="v7-ml" href="index.html">Início</a>
       ${Object.entries(CATNOME).map(([id, n]) =>
-        `<a class="ml ${CAT === id ? 'ativo' : ''}" href="${CATPAG[id]}">${cap(n)}</a>`).join('')}
-      <a class="ml" href="index.html#drop">Lançamentos</a>
-      <a class="ml" href="index.html#sobre">Sobre</a>
-      <div class="menu__foot">
+        `<a class="v7-ml ${CAT === id ? 'ativo' : ''}" href="${CATPAG[id]}">${cap(n)}</a>`).join('')}
+      <a class="v7-ml" href="index.html#drop">Lançamentos</a>
+      <a class="v7-ml" href="index.html#sobre">Sobre</a>
+      <div class="v7-painel__pe">
         <div class="dim" style="font-size:13px;line-height:1.9">
           <div>${V7_CONFIG.cidade}</div>
           <div><a href="${V7_CONFIG.instagram}" target="_blank" rel="noopener">${V7_CONFIG.instagramHandle}</a></div>
@@ -266,7 +257,7 @@ function varrer() {
   function aoRolar() {
     const y = scrollY;
     head.classList.toggle('solid', y > 40);
-    if (!document.body.classList.contains('menu')) head.classList.toggle('hide', y > ultimo && y > 420);
+    if (!document.body.classList.contains('v7-aberto')) head.classList.toggle('hide', y > ultimo && y > 420);
     ultimo = y;
     const h = document.documentElement.scrollHeight - innerHeight;
     bar.style.transform = 'scaleX(' + (h > 0 ? y / h : 0) + ')';
@@ -278,25 +269,24 @@ function varrer() {
   aoRolar();
 
   function menu(aberto) {
-    document.body.classList.toggle('menu', aberto);
+    document.body.classList.toggle('v7-aberto', aberto);
     travar(aberto);
     burger.setAttribute('aria-expanded', aberto ? 'true' : 'false');
     if (aberto) { head.classList.remove('hide'); head.classList.add('solid'); }
     else if (scrollY <= 40) head.classList.remove('solid');
-    $$('.menu a.ml').forEach((a, i) => a.style.transitionDelay = (aberto ? .06 + i * .05 : 0) + 's');
   }
   burger.addEventListener('click', e => {
     e.preventDefault();
-    menu(!document.body.classList.contains('menu'));
+    menu(!document.body.classList.contains('v7-aberto'));
   });
   /* o link fecha o menu antes de navegar (inclusive nas ancoras da propria home) */
-  $$('.menu a').forEach(a => a.addEventListener('click', () => menu(false)));
+  $$('.v7-painel a').forEach(a => a.addEventListener('click', () => menu(false)));
   addEventListener('keydown', e => {
-    if (e.key === 'Escape' && document.body.classList.contains('menu')) menu(false);
+    if (e.key === 'Escape' && document.body.classList.contains('v7-aberto')) menu(false);
   });
   /* virou o celular e virou desktop: o menu nao pode ficar preso aberto */
   addEventListener('resize', () => {
-    if (document.body.classList.contains('menu') && innerWidth > 1150) menu(false);
+    if (document.body.classList.contains('v7-aberto') && innerWidth > 1150) menu(false);
   });
 })();
 
