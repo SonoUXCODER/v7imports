@@ -75,7 +75,7 @@ const V7_CONFIG = {
   whatsapp: "5522999565657",                    // 55 + DDD + número
   instagram: "https://instagram.com/v7imports1",
   instagramHandle: "@v7imports1",
-  cidade: "SÃO PAULO — BR",                     // troque se a loja for de outra cidade
+  cidade: "CABO FRIO — BÚZIOS",                 // troque se a loja for de outra cidade
   ...
 };
 ```

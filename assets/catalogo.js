@@ -27,7 +27,7 @@ const V7_CONFIG = {
   whatsapp: "5522999565657",
   instagram: "https://instagram.com/v7imports1",
   instagramHandle: "@v7imports1",
-  cidade: "SÃO PAULO — BR",
+  cidade: "CABO FRIO — BÚZIOS",
   mensagemGeral: "Olá! Cheguei pelo site da V7 Imports e queria ver as peças disponíveis."
 };
 
