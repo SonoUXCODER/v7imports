@@ -256,6 +256,14 @@ body.v7-aberto .v7-painel{transform:translateY(0);pointer-events:auto;visibility
 .drop__sticky{position:sticky;top:0;height:100svh;overflow:hidden}
 .drop__media{position:absolute;inset:0;will-change:transform}
 .drop__media video{width:100%;height:100%;object-fit:cover}
+@media (min-width:901px){
+  /* video em pe numa tela deitada: mostra o quadro inteiro em vez de recortar
+     a faixa do meio e ampliar. O fundo desfocado ocupa a largura que sobra. */
+  .drop__media::before{content:"";position:absolute;inset:-6%;
+    background:url("img/hellstar-side.webp") center/cover no-repeat;
+    filter:blur(52px) brightness(.4) saturate(.65)}
+  .drop__media video{position:relative;z-index:1;object-fit:contain}
+}
 .drop__veil{position:absolute;inset:0;will-change:opacity;background:linear-gradient(to bottom,rgba(0,0,0,.82),rgba(0,0,0,.32) 38%,rgba(0,0,0,.42) 64%,rgba(0,0,0,.9))}
 .drop__in{position:absolute;inset:0;z-index:3;padding:calc(var(--head-h) + 20px) var(--pad) 28px;display:flex;flex-direction:column;justify-content:space-between;text-align:center}
 .drop__title{margin:auto 0}
@@ -330,17 +338,14 @@ body.v7-aberto .v7-painel{transform:translateY(0);pointer-events:auto;visibility
 .impact__row .dsp{font-size:clamp(2.6rem,10vw,10rem);display:inline-block;padding-right:.25em}
 
 .about{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,5vw,84px);align-items:center}
-.about__media{position:relative}
-.about__media{max-width:540px}
+.about__media{position:relative;max-width:540px}
 /* moldura em pe: o video da costura e 720x1280 */
 .about__media .m1{aspect-ratio:3/4;overflow:hidden;background:var(--ink)}
 .about__media .m1 img,
 .about__media .m1 video{width:100%;height:100%;object-fit:cover;display:block}
-.about__media .m2{position:absolute;right:-7%;bottom:-8%;width:46%;aspect-ratio:1;overflow:hidden;border:7px solid var(--noir);background:var(--graf)}
-.about__media .m2 img{width:100%;height:100%;object-fit:cover}
 .about p{color:rgba(242,242,238,.76);font-size:clamp(15px,1.5vw,18px);max-width:44ch}
 .about p + p{margin-top:16px}
-@media (max-width:900px){.about{grid-template-columns:1fr}.about__media .m2{width:38%;right:0;bottom:-6%}}
+@media (max-width:900px){.about{grid-template-columns:1fr}}
 
 .cta{background:var(--neon);color:#000;padding:clamp(60px,9vw,124px) var(--pad)}
 .cta__in{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:end}
