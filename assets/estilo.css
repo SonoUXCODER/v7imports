@@ -393,7 +393,12 @@ body.menu .menu a.ml{opacity:1;transform:none}
 
 .float{position:fixed;right:16px;bottom:16px;z-index:6000;display:flex;align-items:center;gap:10px;background:var(--neon);color:#000;padding:15px 19px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 12px 36px rgba(0,0,0,.55);transform:translateY(130%);transition:transform .5s var(--ease)}
 .float.on{transform:none}
-@media (max-width:640px){.float span{display:none}.float{padding:16px}}
+@media (max-width:640px){
+  /* no celular o texto sai e o botao vira um circulo, mesmo verde neon */
+  .float span{display:none}
+  .float{width:56px;height:56px;padding:0;gap:0;border-radius:50%;justify-content:center}
+  .float svg{width:26px;height:26px}
+}
 
 /* ============================ PÁGINA DE CATEGORIA ========================= */
 .chero{position:relative;height:clamp(460px,78svh,760px);overflow:hidden;background:var(--ink);display:flex;align-items:flex-end}
