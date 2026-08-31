@@ -28,6 +28,22 @@ const cap = s => s.charAt(0) + s.slice(1).toLowerCase();
 const PAGINA = document.body.dataset.pagina || 'home';
 const CAT    = document.body.dataset.cat || null;
 
+/* trava/destrava a rolagem guardando a posicao (menu e modal usam isso) */
+let _travaY = 0;
+function travar(on) {
+  if (on) {
+    if (document.body.classList.contains('lock')) return;
+    _travaY = window.scrollY;
+    document.body.style.top = -_travaY + 'px';
+    document.body.classList.add('lock');
+  } else {
+    if (!document.body.classList.contains('lock')) return;
+    document.body.classList.remove('lock');
+    document.body.style.top = '';
+    window.scrollTo(0, _travaY);
+  }
+}
+
 function waLink(msg) {
   return 'https://wa.me/' + String(V7_CONFIG.whatsapp).replace(/\D/g, '') + '?text=' + encodeURIComponent(msg);
 }
@@ -242,21 +258,31 @@ function varrer() {
   addEventListener('resize', aoRolar);
   aoRolar();
 
-  burger.addEventListener('click', () => {
-    const aberto = document.body.classList.toggle('menu');
-    document.body.classList.toggle('lock', aberto);
-    burger.setAttribute('aria-expanded', aberto);
+  function menu(aberto) {
+    document.body.classList.toggle('menu', aberto);
+    travar(aberto);
+    burger.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+    if (aberto) { head.classList.remove('hide'); head.classList.add('solid'); }
+    else if (scrollY <= 40) head.classList.remove('solid');
     $$('.menu a.ml').forEach((a, i) => a.style.transitionDelay = (aberto ? .06 + i * .05 : 0) + 's');
+  }
+  burger.addEventListener('click', e => {
+    e.preventDefault();
+    menu(!document.body.classList.contains('menu'));
   });
-  $$('.menu a').forEach(a => a.addEventListener('click', () => {
-    document.body.classList.remove('menu', 'lock');
-    burger.setAttribute('aria-expanded', false);
-  }));
+  /* o link fecha o menu antes de navegar (inclusive nas ancoras da propria home) */
+  $$('.menu a').forEach(a => a.addEventListener('click', () => menu(false)));
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.body.classList.contains('menu')) menu(false);
+  });
+  /* virou o celular e virou desktop: o menu nao pode ficar preso aberto */
+  addEventListener('resize', () => {
+    if (document.body.classList.contains('menu') && innerWidth > 1150) menu(false);
+  });
 })();
 
 /* ================================================================ cards */
-function cardHTML(p, i) {
-  const largo = (i % 7 === 0 || i % 7 === 5);
+function cardHTML(p) {
   const im = p.imagens[0];
   const tag = p.tag ? '<span class="tg">' + p.tag + '</span>' : '';
   const st = p.status === 'ultimas'
@@ -264,10 +290,10 @@ function cardHTML(p, i) {
     : '<span class="tg gh">DISPONÍVEL</span>';
   const preco = (typeof p.preco === 'number') ? brl(p.preco) : 'Sob consulta';
   return `
-  <article class="card${largo ? ' w3' : ''} rv-w">
+  <article class="card rv-w">
     <button class="card__ph" data-open="${p.id}" aria-label="Ver ${p.nome}">
       <img src="${img(im.src, true)}" srcset="${img(im.src, true)} 780w, ${img(im.src)} 1600w"
-           sizes="(max-width:640px) 50vw, (max-width:1100px) 33vw, 25vw"
+           sizes="(max-width:640px) 50vw, (max-width:1100px) 33vw, (max-width:1680px) 25vw, 390px"
            style="object-position:${im.pos}" alt="${p.nome}" loading="lazy" decoding="async">
       <span class="card__tag">${tag}${st}</span>
       <span class="card__hov">Ver peça &rarr;</span>
@@ -331,7 +357,7 @@ const modal = (function () {
     el.classList.add('on');
     void el.offsetWidth;
     el.classList.add('show');
-    document.body.classList.add('lock');
+    travar(true);
     $('.modal__win').scrollTop = 0;
     $('.modal__x').focus();
     history.replaceState(null, '', '#produto-' + p.id);
@@ -348,7 +374,7 @@ const modal = (function () {
 
   function fechar() {
     el.classList.remove('show');
-    document.body.classList.remove('lock');
+    travar(false);
     setTimeout(() => el.classList.remove('on'), 420);
     if (location.hash.indexOf('#produto-') === 0) history.replaceState(null, '', location.pathname + location.search);
     if (foco && foco.focus) foco.focus();
@@ -412,7 +438,10 @@ function orbitCarousel(raiz) {
   let R = 600, ang = 0, alvo = 0, rodando = false, tocado = 0;
 
   function medir() {
-    const w = orbs[0].getBoundingClientRect().width || 300;
+    /* offsetWidth e a largura de layout. getBoundingClientRect() aqui volta
+       JA deformada pela perspectiva 3D — usar ela fazia o raio crescer a
+       cada resize e explodia o carrossel no celular. */
+    const w = orbs[0].offsetWidth || 300;
     R = Math.round((w / 2) / Math.tan(Math.PI / N) * 1.18);
     orbs.forEach((o, i) => {
       o.style.transform = `rotateY(${i * passo}deg) translateZ(${R}px)`;
@@ -487,7 +516,15 @@ function orbitCarousel(raiz) {
     if (visivel && !ativo && Date.now() - tocado > 6000 && !document.hidden) girar(1);
   }, 4200);
 
-  addEventListener('resize', () => { medir(); desenhar(); });
+  /* no celular a barra do navegador dispara resize a cada rolagem: so
+     remedimos quando a largura muda mesmo */
+  let larguraOrb = innerWidth;
+  addEventListener('resize', () => {
+    if (innerWidth === larguraOrb) return;
+    larguraOrb = innerWidth;
+    medir(); desenhar();
+  });
+  addEventListener('load', () => { medir(); desenhar(); });
   medir(); desenhar();
   /* uma volta curta de apresentação */
   if (!reduz) { alvo = -passo; anima(); }
@@ -514,15 +551,17 @@ if (PAGINA === 'home') {
     $$('.cat img', track).forEach((im, i) => im.style.objectPosition = V7_CATEGORIAS[i].pos);
 
     const sec = $('.cats'), rail = $('#catsRail');
-    let raf = null, atual = 0, max = 0;
+    let raf = null, atual = 0, max = 0, larguraAnterior = 0;
     function medir() {
-      if (mob()) { sec.style.height = ''; track.style.transform = ''; return; }
-      max = Math.max(0, track.scrollWidth - innerWidth + 24);
-      sec.style.height = (innerHeight + max * 1.1) + 'px';
+      if (mob()) { sec.style.height = ''; track.style.transform = 'translate3d(0,0,0)'; max = 0; return; }
+      /* scrollWidth ignora o padding da direita: somamos ele na mao */
+      const padDir = parseFloat(getComputedStyle(track).paddingRight) || 0;
+      max = Math.max(0, track.scrollWidth + padDir - innerWidth);
+      sec.style.height = max > 0 ? (innerHeight + max * 1.15) + 'px' : '';
     }
     function passo() {
       raf = null;
-      if (mob()) return;
+      if (mob() || max <= 0) return;
       const r = sec.getBoundingClientRect();
       const meta = clamp(-r.top / ((sec.offsetHeight - innerHeight) || 1), 0, 1);
       atual = lerp(atual, meta, .16);
@@ -532,37 +571,68 @@ if (PAGINA === 'home') {
       if (atual !== meta) raf = requestAnimationFrame(passo);
     }
     function chuta() { if (!raf) raf = requestAnimationFrame(passo); }
+    function remedir() { medir(); atual = 0; chuta(); }
     addEventListener('scroll', chuta, { passive: true });
-    addEventListener('resize', () => { medir(); chuta(); });
+    /* no celular a barra do navegador muda a ALTURA a cada rolagem e dispara
+       resize sem parar — so remedimos quando a LARGURA muda de verdade */
+    larguraAnterior = innerWidth;
+    addEventListener('resize', () => {
+      if (innerWidth === larguraAnterior) { chuta(); return; }
+      larguraAnterior = innerWidth;
+      remedir();
+    });
+    /* as fotos e a fonte Anton chegam depois e mudam a largura da trilha */
+    $$('img', track).forEach(im => im.complete || im.addEventListener('load', remedir, { once: true }));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(remedir);
+    addEventListener('load', remedir);
     medir(); passo();
   })();
 
-  /* ------------------------------------------------------------ catálogo */
+  /* -------------------------------------------------------------- vitrine
+     A home nao repete o catalogo inteiro: mostra uma amostra das pecas, com
+     as fotos surgindo uma atras da outra. O catalogo completo mora nas
+     paginas de categoria (camisetas.html, conjuntos.html, ...).            */
   (function () {
-    const grid = $('#grid'); if (!grid) return;
-    let filtro = 'todos', termo = '';
+    const vit = $('#vitrine'); if (!vit) return;
 
-    function render() {
-      const t = termo.trim().toLowerCase();
-      pintarGrid(grid, V7_PRODUTOS.filter(p => {
-        const okCat = filtro === 'todos' || p.categoria === filtro;
-        const okT = !t || (p.nome + ' ' + p.descricao + ' ' + CATNOME[p.categoria]).toLowerCase().includes(t);
-        return okCat && okT;
-      }));
+    /* atalhos pras paginas de cada categoria */
+    const nav = $('#vitNav');
+    if (nav) nav.innerHTML = Object.entries(CATNOME)
+      .map(([id, n]) => `<a href="${CATPAG[id]}">${cap(n)} <i aria-hidden="true">&rarr;</i></a>`).join('');
+
+    /* escolhe ate 8 pecas alternando as categorias, pra vitrine nao ficar
+       so de camiseta. Prioriza quem esta no drop. */
+    function selecionar(n) {
+      const porCat = {};
+      V7_PRODUTOS.forEach(p => (porCat[p.categoria] = porCat[p.categoria] || []).push(p));
+      Object.values(porCat).forEach(l => l.sort((a, b) => (b.drop ? 1 : 0) - (a.drop ? 1 : 0)));
+      const ordem = Object.keys(CATNOME).filter(k => porCat[k]);
+      const fora = [];
+      for (let volta = 0; fora.length < n && volta < 12; volta++)
+        for (const k of ordem) if (porCat[k][volta] && fora.length < n) fora.push(porCat[k][volta]);
+      return fora;
     }
-    const cats = [['todos', 'Todos'], ...Object.entries(CATNOME).map(([k, v]) => [k, cap(v)])];
-    $('#filters').innerHTML = cats.map(([id, nome]) =>
-      `<button class="fl${id === 'todos' ? ' on' : ''}" data-f="${id}">${nome}</button>`).join('');
-    $$('.fl').forEach(b => b.addEventListener('click', () => {
-      filtro = b.dataset.f;
-      $$('.fl').forEach(x => x.classList.toggle('on', x === b));
-      render();
-    }));
-    let deb;
-    $('#busca').addEventListener('input', e => {
-      clearTimeout(deb); deb = setTimeout(() => { termo = e.target.value; render(); }, 150);
-    });
-    render();
+
+    vit.innerHTML = selecionar(8).map((p, i) => {
+      const im = p.imagens[0];
+      const tag = p.status === 'ultimas'
+        ? '<span class="tg ult">ÚLTIMAS</span>'
+        : (p.tag ? '<span class="tg">' + p.tag + '</span>' : '');
+      return `
+      <button class="shot" data-open="${p.id}" style="--d:${(i % 4) * 0.09 + 0.04}s" aria-label="Ver ${p.nome}">
+        <span class="shot__ph">
+          <img src="${img(im.src, true)}" srcset="${img(im.src, true)} 780w, ${img(im.src)} 1600w"
+               sizes="(max-width:760px) 50vw, (max-width:1200px) 33vw, (max-width:1680px) 25vw, 390px"
+               style="object-position:${im.pos}" alt="${p.nome}" loading="lazy" decoding="async">
+          <span class="shot__tag">${tag}</span>
+        </span>
+        <span class="shot__b"><b>${p.nome}</b><i>${CATNOME[p.categoria]}</i></span>
+      </button>`;
+    }).join('');
+
+    /* as fotos surgem conforme entram na tela */
+    $$('.shot', vit).forEach(el => { pendentes.add(el); revealObs.observe(el); });
+    varrer();
   })();
 
   /* ------------------------------------------------------- orbit + faixa */

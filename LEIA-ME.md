@@ -11,12 +11,18 @@ Páginas:
 
 | página | o que é |
 |---|---|
-| `index.html` | home: capa em vídeo, categorias, catálogo completo, drop e o carrossel 3D |
+| `index.html` | home: capa em vídeo, categorias, vitrine de amostra, drop e o carrossel 3D |
 | `camisetas.html` · `conjuntos.html` · `moletons.html` · `calcas.html` · `acessorios.html` | uma landing page por categoria |
 
 As páginas de categoria se montam sozinhas: o produto aparece na página da
 categoria que estiver escrita no campo `categoria` dele. Você não precisa
 editar HTML nenhum pra isso.
+
+**A home não repete o catálogo inteiro.** A seção "Catálogo V7" é uma
+vitrine: mostra 8 peças, uma de cada categoria por vez, com as fotos
+surgindo conforme o cliente rola. Quem quer ver tudo vai pela categoria.
+Essa escolha é automática — prioriza quem está com `drop: true` — então
+você não precisa mexer em nada pra trocar o que aparece lá.
 
 Para ver na sua máquina: dê dois cliques em **index.html**.
 
@@ -135,7 +141,7 @@ v7-imports/
 ├─ camisetas.html …         uma página por categoria (5 arquivos)
 ├─ assets/
 │  ├─ catalogo.js           produtos, categorias, WhatsApp  ← você edita aqui
-│  ├─ site.js               comportamento (menu, filtros, modal, carrossel)
+│  ├─ site.js               comportamento (menu, vitrine, modal, carrossel)
 │  ├─ estilo.css            visual do site inteiro
 │  ├─ img/                  fotos (.webp otimizado + versões -sm)
 │  └─ video/                vídeos de fundo
