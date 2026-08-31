@@ -63,7 +63,9 @@ body.cur-on .cur{width:76px;height:76px;margin:-38px 0 0 -38px;background:rgba(2
 @media (hover:none),(pointer:coarse){.cur,.cur-d{display:none}}
 
 /* ------------------------------------------------------------ preloader -- */
-.pre{position:fixed;inset:0;z-index:9800;background:var(--ink);display:grid;place-items:center;transition:clip-path 1s var(--ease)}
+.pre{position:fixed;inset:0;z-index:9800;background:var(--ink);display:grid;place-items:center;transition:clip-path var(--pre-t,.62s) var(--ease)}
+/* ja viu a abertura nesta visita: a cortina sai bem mais rapido */
+.pre.rapido{--pre-t:.34s}
 .pre.out{clip-path:inset(0 0 100% 0);pointer-events:none}
 .pre img{width:clamp(140px,24vw,240px);filter:drop-shadow(0 0 40px rgba(182,255,0,.35))}
 .pre__bar{width:min(280px,58vw);height:2px;background:rgba(242,242,238,.14);margin:28px auto 0;overflow:hidden}

@@ -184,18 +184,37 @@ const ICONE_WA = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentC
   $$('[data-ig]').forEach(a => { a.href = V7_CONFIG.instagram; });
 })();
 
-/* ============================================================= preloader */
+/* ============================================================= preloader
+   A abertura completa acontece so na primeira pagina da visita. Quando o
+   cliente pula pra CAMISETAS, MOLETONS etc. ele ja viu a marca — ali a
+   cortina so passa rapido, senao a navegacao fica pesada.                 */
 (function () {
   const pre = $('#pre'), bar = $('#preBar');
+
+  let repete = false;
+  try {
+    repete = sessionStorage.getItem('v7:pre') === '1';
+    sessionStorage.setItem('v7:pre', '1');
+  } catch (e) { /* aba anonima bloqueia: segue como primeira visita */ }
+
+  if (repete) pre.classList.add('rapido');
+
+  const passo  = repete ?  45 :  60;   /* de quanto em quanto a barra anda */
+  const salto  = repete ?  40 :  26;
+  const base   = repete ?  22 :  14;
+  const espera = repete ?  60 : 120;   /* respiro com a barra cheia        */
+  const saida  = repete ? 380 : 700;   /* tem que cobrir o --pre-t do CSS  */
+
   let v = 0;
   const t = setInterval(() => {
-    v += Math.random() * 22 + 10;
-    if (v >= 100) { v = 100; clearInterval(t); setTimeout(fim, 200); }
+    v += Math.random() * salto + base;
+    if (v >= 100) { v = 100; clearInterval(t); setTimeout(fim, espera); }
     bar.style.transform = 'scaleX(' + (v / 100) + ')';
-  }, 90);
+  }, passo);
+
   function fim() {
     pre.classList.add('out');
-    setTimeout(() => pre.style.display = 'none', 1100);
+    setTimeout(() => pre.style.display = 'none', saida);
     const hv = $('#heroVideo'); if (hv) hv.play().catch(() => {});
   }
 })();
